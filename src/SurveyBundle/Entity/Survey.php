@@ -37,6 +37,11 @@ class Survey
 	private $password;
 
 	/**
+	 * @ORM\Column(type="string", length=100)
+	 */
+	private $status;
+
+	/**
 	 * @return mixed
 	 */
 	public function getId()
@@ -98,6 +103,22 @@ class Survey
 	public function setPassword($password)
 	{
 		$this->password = $password;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getStatus()
+	{
+		return $this->status;
+	}
+
+	/**
+	 * @param mixed $status
+	 */
+	public function setStatus($status)
+	{
+		$this->status = $status;
 	}
 
 }

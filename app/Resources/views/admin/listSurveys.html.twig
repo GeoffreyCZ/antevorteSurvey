@@ -1,9 +1,65 @@
 {% extends 'base.html.twig' %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
 
+            $('.confirm-delete').on('click', function () {
+
+                var id = $(this).data("id");
+                $.confirm({
+                    title: 'Potvrzení',
+                    content: 'Opravdu si přejete dotazník smazat?',
+                    buttons: {
+                        ano: function () {
+                            $.post('{{ path("admin_delete_survey") }}',
+                                {
+                                    surveyId: id
+                                },
+                                function (response) {
+                                    if (response.code === 200) {
+                                        console.log("ready!");
+                                        $.alert('Dotazník byl úspěšně smazán!');
+                                    }
+                                }, "json");
+                        },
+                        ne: function () {
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
 {% block body %}
-    {% if surveys is defined %}
-        jop
-    {% else %}
-        nope
-    {% endif %}
+    <div class="panel panel-default">
+        <div class="panel-heading">Seznam dotazníků</div>
+        <table class="table">
+            <thead>
+                <th>ID</th>
+                <th>Název</th>
+                <th>Heslo</th>
+                <th>Status</th>
+                <th></th>
+            </thead>
+            <tbody>
+            {% if surveys is defined and surveys is not empty %}
+                {% for survey in surveys %}
+                    <tr>
+                        <td>{{ survey.id }}</td>
+                        <td>{{ survey.name }}</td>
+                        <td>{{ survey.password }}</td>
+                        <td>{{ survey.status }}</td>
+                        <td>
+                            <a href="#" class="confirm-delete" data-id="{{ survey.id }}">Smazat</a>
+                            <a href="#">Upravit</a>
+                            <a href="#">Disable</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                nope
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

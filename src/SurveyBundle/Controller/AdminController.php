@@ -3,7 +3,11 @@
 namespace SurveyBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use SurveyBundle\Entity\Survey;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdminController extends Controller
 {
@@ -21,7 +25,23 @@ class AdminController extends Controller
 	 */
 	public function listSurveysAction()
 	{
-		$surveys = ["1" => "jedna"];
-		return $this->render('admin/listSurveys.html.twig', [$surveys]);
+		$surveys = $this->getDoctrine()->getRepository(Survey::class)->findAll();
+		return $this->render('admin/listSurveys.html.twig', [
+			'surveys' => $surveys
+		]);
+	}
+
+	/**
+	 * @param Request $request
+	 * @Route("/admin/dotaznik/smazat", name="admin_delete_survey")
+	 * @return JsonResponse | Response
+	 */
+	public function ajaxDeleteSurveyAction(Request $request)
+	{
+		$response = [
+			"code" => 200,
+			"success" => true
+		];
+		return new JsonResponse($response);
 	}
 }
