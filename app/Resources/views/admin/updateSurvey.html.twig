@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+{% block javascripts %}
+    <script src="{{ asset('js/formCollections.js') }}"></script>
+{% endblock %}
+{% block body %}
+    <header>
+        <div class='header-content'>
+            <div class='header-content-inner'>
+            </div>
+            {% for type, messages in app.session.flashBag.all() %}
+                {% for message in messages %}
+                    <div class="saved alert alert-{{ type }} fade in alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span
+                                    aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            <a href="{{ path('admin_list_surveys') }}"><- Zpět na seznam dotazníků </a>
+            <br>
+            {{ form_start(form) }}
+            <div class='container'>
+                <div class='col-lg-10 col-lg-offset-1 text-center'>
+                    <table class='table'>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Otázka</th>
+                            <th>Odpověď</th>
+                            <th>Odstranit</th>
+                        </tr>
+                        </thead>
+                        <tbody class="questions" data-prototype="
+                                {% filter escape %}
+                                {{ include('prototypeQuestions.html.twig', { 'form': form.questions.vars.prototype}) }}
+                                {% endfilter %}">
+                        {% set i = 0 %}
+                        {% for question in form.questions %}
+                            {% set i = i + 1 %}
+                            <tr>
+                                <td></td>
+                                <td>{{ form_row(question.question) }}</td>
+                                <td>
+                                    <table>
+                                        <tbody class="questions" data-prototype="
+                                {% filter escape %}
+                                {{ include('prototypeAnswers.html.twig', { 'form': form.questions.vars.prototype.answers}) }}
+                                {% endfilter %}">
+                                        <tr>
+                                            {% for answer in question.answers %}
+                                                <td>{{ form_row(answer.answer) }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+        </div>
+    </header>
+{% endblock %}

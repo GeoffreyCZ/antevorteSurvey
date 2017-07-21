@@ -28,7 +28,7 @@ class Question
 	private $question;
 
 	/**
-	 * @ORM\OneToMany(targetEntity="Answer", mappedBy="question")
+	 * @ORM\OneToMany(targetEntity="Answer", mappedBy="question", cascade={"remove" })
 	 */
 	private $answers;
 

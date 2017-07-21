@@ -1,0 +1,1 @@
+INSERT INTO antevorte_survey.survey (name, password, status) VALUES ('dotazník', 'heslo', 'active');

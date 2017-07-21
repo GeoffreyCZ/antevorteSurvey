@@ -2,6 +2,7 @@
 {% block javascripts %}
     <script>
         $(document).ready(function () {
+            //$('[data-toggle="tooltip"]').tooltip();
 
             $('.confirm-delete').on('click', function () {
 
@@ -17,12 +18,87 @@
                                 },
                                 function (response) {
                                     if (response.code === 200) {
-                                        console.log("ready!");
-                                        $.alert('Dotazník byl úspěšně smazán!');
+                                        $.confirm({
+                                            title: 'Jupí!',
+                                            content: 'Dotazník byl úspěšně smazán!',
+                                            type: 'green',
+                                            backgroundDismiss: true,
+                                            typeAnimated: true,
+                                            buttons: {
+                                                Zavřít: function () {
+                                                    window.location.reload()
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        $.confirm({
+                                            title: 'Chyba!',
+                                            content: 'Dotazník se nepodařilo smazat. ' +
+                                            'Kontaktujte administrátora, aby koštětem vyhnal myši ze serverovny.',
+                                            type: 'red',
+                                            typeAnimated: true,
+                                            buttons: {
+                                                Zavřít: function () {
+                                                }
+                                            }
+                                        });
                                     }
                                 }, "json");
                         },
                         ne: function () {
+                        }
+                    }
+                });
+            });
+
+            $('.create-survey').on('click', function () {
+
+                var createSurveyHtml = '{{ form_start(form) }}{{ form_widget(form) }}{{ form_end(form) }}';
+                var id = $(this).data("id");
+                $.confirm({
+                    title: 'Tvorba dotazníku',
+                    content: createSurveyHtml,
+                    buttons: {
+                        Uložit: function () {
+                            $.post('{{ path("admin_ajax_create_survey") }}',
+                                {
+                                    surveyName: $("#surveyName").val()
+                                },
+                                function (response) {
+                                    var surveyId = response.surveyId;
+                                    if (response.code === 200) {
+                                        $.confirm({
+                                            title: 'Jupí!',
+                                            content: 'Dotazník byl úspěšně vytvořen!',
+                                            type: 'green',
+                                            backgroundDismiss: true,
+                                            typeAnimated: true,
+                                            buttons: {
+                                                'Přejít na tvorbu otázek': function () {
+                                                    window.location.href =
+                                                        "{{ path('admin_update_survey') }}" + "/" + surveyId;
+                                                },
+                                                'Zavřít': function () {
+                                                    window.location.reload()
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        $.confirm({
+                                            title: 'Chyba!',
+                                            content: 'Dotazník se nepodařilo vytvořit. ' +
+                                            'Kontaktujte administrátora, aby koštětem vyhnal myši ze serverovny.',
+                                            type: 'red',
+                                            typeAnimated: true,
+                                            buttons: {
+                                                Zavřít: function () {
+                                                }
+                                            }
+                                        });
+                                    }
+                                }, "json");
+                        },
+                        Zrušit: function () {
                         }
                     }
                 });
@@ -35,11 +111,13 @@
         <div class="panel-heading">Seznam dotazníků</div>
         <table class="table">
             <thead>
+            <tr>
                 <th>ID</th>
                 <th>Název</th>
                 <th>Heslo</th>
                 <th>Status</th>
                 <th></th>
+            </tr>
             </thead>
             <tbody>
             {% if surveys is defined and surveys is not empty %}
@@ -50,12 +128,30 @@
                         <td>{{ survey.password }}</td>
                         <td>{{ survey.status }}</td>
                         <td>
-                            <a href="#" class="confirm-delete" data-id="{{ survey.id }}">Smazat</a>
-                            <a href="#">Upravit</a>
-                            <a href="#">Disable</a>
+                            <a href="#" class="confirm-delete"
+                               data-id="{{ survey.id }}"
+                               data-placement="top"
+                               data-toggle="tooltip"
+                               title="Smazat dotazník">
+                                <i class="glyphicon glyphicon-remove"></i></a>
+                            <a href="{{ path('admin_update_survey', {'surveyId': survey.id}) }}"
+                               data-placement="top"
+                               data-toggle="tooltip"
+                               title="Upravit dotazník">
+                                <i class="glyphicon glyphicon-edit"></i></a>
+                            <a href="#"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               title="Zneveřejnit">
+                                <i class="glyphicon glyphicon-eye-open"></i></a>
                         </td>
                     </tr>
                 {% endfor %}
+                <tr>
+                    <td colspan="5">
+                        <a href="#" class="create-survey"> + přidat nový dotazník</a>
+                    </td>
+                </tr>
             {% else %}
                 nope
             {% endif %}
