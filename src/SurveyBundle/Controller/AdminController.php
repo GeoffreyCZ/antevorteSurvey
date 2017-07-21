@@ -56,7 +56,6 @@ class AdminController extends Controller
 	}
 
 	/**
-	 * @param Request $request
 	 * @return Response
 	 * @Route("/admin/dotaznik/otevrit-vytvoreni", name="admin_create_survey")
 	 */
