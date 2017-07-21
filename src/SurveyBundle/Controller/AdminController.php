@@ -24,10 +24,11 @@ class AdminController extends Controller
 	/**
 	 * @Route("/admin/seznam-dotazniku", name="admin_list_surveys")
 	 */
-	public function listSurveysAction()
+	public function listSurveysAction(Request $request)
 	{
 		$surveys = $this->getDoctrine()->getRepository(Survey::class)->findAll();
 		$form = $this->createForm(SurveyType::class);
+
 		return $this->render('admin/listSurveys.html.twig', [
 			'surveys' => $surveys,
 			'form' => $form->createView()
@@ -56,21 +57,6 @@ class AdminController extends Controller
 	}
 
 	/**
-	 * @return Response
-	 * @Route("/admin/dotaznik/otevrit-vytvoreni", name="admin_create_survey")
-	 */
-	public function createSurveyAction()
-	{
-		$survey = new Survey();
-
-		$form = $this->createForm(SurveyType::class, $survey);
-
-		return $this->render('admin/listSurveys.html.twig', [
-			'form' => $form->createView()
-		]);
-	}
-
-	/**
 	 * @param Request $request
 	 * @return Response
 	 * @Route("/admin/dotaznik/vytvorit", name="admin_ajax_create_survey")
@@ -78,8 +64,8 @@ class AdminController extends Controller
 	public function createSurveyAjaxAction(Request $request)
 	{
 		$survey = new Survey();
-		$surveyName = $request->get('survey[name]');
-		$surveyPassword = $request->get('survey[password]');
+		$surveyName = $request->get('surveyName');
+		$surveyPassword = $request->get('surveyPassword');
 		$survey->setName($surveyName);
 		$survey->setPassword($surveyPassword);
 		$survey->setStatus('active');

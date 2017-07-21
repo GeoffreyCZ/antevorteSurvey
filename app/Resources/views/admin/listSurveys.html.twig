@@ -62,7 +62,8 @@
                         Uložit: function () {
                             $.post('{{ path("admin_ajax_create_survey") }}',
                                 {
-                                    surveyName: $("#surveyName").val()
+                                    surveyName: $("#survey_name").val(),
+                                    surveyPassword: $("#survey_password").val()
                                 },
                                 function (response) {
                                     var surveyId = response.surveyId;
